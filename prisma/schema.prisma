@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  PROVIDER
+  CUSTOMER
+  PROFESSIONAL
+}
+enum SchedulingStatus {
+  CANCELED
+  CONCLUDED
+  MARKED
+}
+model User{
+  id String @id @default(uuid())
+  name String
+  fone String
+  email String
+  password String
+  userType UserType
+
+}
+model Barber{
+  id String @id @default(uuid())
+  user_id String
+
+
+}
+
+model Professional{
+  id String @id @default(uuid())
+  user_id String
+
+  barber_id String
+}
+
+model Customer{
+  id String @id @default(uuid())
+  user_id String
+}
+
+model Location{
+  id String @id @default(uuid())
+  neighborhood String
+  address String
+  road String
+  city String
+  state String
+  number Int
+  complement String?
+  barber_id String
+}
+
+model Subscription{
+    id String @id @default(uuid())
+    plan String
+    status String
+    customer_id String
+}
+
+model Haircut{
+  id String @id @default(uuid())
+  description String
+  price Float
+  barber_id String
+}
+
+model Professional_Haircut{
+  haircut_id String
+  professional_id String
+
+  @@id([haircut_id, professional_id])
+}
+
+model Schedule{
+ id String  @id @default(uuid()) 
+ date DateTime
+ professional_id String
+  defaultDuration Int? @default(30)
+}
+model ScheduleItem{
+  sheduling_id String
+  haircut_id String
+  quantity Int
+  totalPriceItem Float
+  @@id([sheduling_id,haircut_id])
+}
+model Scheduling{
+  id  String @id @default(uuid())
+  status SchedulingStatus
+   totalPrice Float
+  customer_id String
+  shedule_id String
+}
