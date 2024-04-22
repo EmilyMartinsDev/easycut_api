@@ -37,7 +37,9 @@ import { UserPayload } from './models/UserPayload';
         };
     
         return {
-          access_token: this.jwtService.sign(payload),
+          id: user.id,
+          name: user.name,
+          token: this.jwtService.sign(payload),
         };
       }
     }

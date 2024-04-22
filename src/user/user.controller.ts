@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { AuthRequest } from 'src/auth/models/AuthRequest';
 
 @Controller('user')
 export class UserController {
@@ -23,9 +24,15 @@ export class UserController {
     return this.userService.findByEmail(email);
   }
 
+  @Get('me')
+   DatailUser(@Request() req:AuthRequest) {
+  const id = req.user.id
+    return this.userService.findOne(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
   @Patch(':id')

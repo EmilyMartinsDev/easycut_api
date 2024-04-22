@@ -11,7 +11,7 @@ export class UserService {
     constructor(private readonly prisma: PrismaService) {}
 
     async create(createUserDto: CreateUserDto): Promise<User> {
-      // Criptografar a senha antes de salvar no banco de dados
+   
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
   
       // Criar o usuário no banco de dados
@@ -22,7 +22,7 @@ export class UserService {
         },
       });
   
-      // Se o tipo de usuário for 'provider', crie um registro na tabela de barbeiros
+ 
       if (createUserDto.userType === UserType.PROVIDER) {
         await this.prisma.barber.create({
           data: {
@@ -51,8 +51,24 @@ async  findByEmail(email:string) {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+ async findOne(id: string) {
+  try{
+    const user = await this.prisma.user.findUnique({
+      where:{
+        id:id
+      },
+      select:{
+        email:true,
+        name:true,
+        fone:true,
+        userType:true,
+        id:true
+      }
+    })
+    return user
+  }catch(err){
+    throw new Error('user not found')
+  }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
